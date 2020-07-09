@@ -10,6 +10,9 @@ ICON=gnome-screenshot
 
 export LC_ALL=en_US.UTF-8
 
+PREFIX="CropperScreenshot"
+SCREENSHOT_ROOT=$HOME/Pictures/ScreenShots
+
 # language selection dialog
 LANG=$(yad \
     --width 300 --entry --title "$TITLE" \
@@ -21,52 +24,29 @@ LANG=$(yad \
     "eng" "ita" "ru" "fr")
 RET=$? # check return status
 
-if [ "$RET" = 252 ] || [ "$RET" = 1 ]  # WM-Close or "cancel"
-  then
-      exit
-fi
+
+
+# WM-Close or "cancel"
+if [ "$RET" = 252 ] || [ "$RET" = 1 ] then exit; fi
 
 echo "Language set to $LANG"
 
 
-# PREFIX=$(yad \
-#     --width 300 --entry --title "$TITLE" \
-#     --image=$ICON \
-#     --window-icon=$ICON \
-#     --button="ok:0" --button="cancel:1" \
-#     --text "Input prefix (leave empty for default):" \
-#     --entry)
-#
-#if [ -z $PREFIX ]; then
-PREFIX="CropperScreenshot"
-#fi
+mkdir -p SCREENSHOT_ROOT
 
-
-RET=$? # check return status
-
-if [ "$RET" = 252 ] || [ "$RET" = 1 ]  # WM-Close or "cancel"
-  then
-      exit
-fi
-
-echo "Prefix set to $PREFIX"
-# - You can modify the list of available languages by editing the line above
-# - Make sure to use the same ISO codes tesseract does (man tesseract for details)
-# - Languages will of course only work if you have installed their respective
-#   language packs (https://code.google.com/p/tesseract-ocr/downloads/list)
-
-mkdir -p $HOME/Pictures/ScreenShots
-
-FILE=$(date +"$HOME/Pictures/ScreenShots/${PREFIX}_%Y-%m-%d_%H:%M:%S.png")
+FILE=$(date +"${SCREENSHOT_ROOT}/${PREFIX}_%Y-%m-%d_%H:%M:%S.png")
 
 scrot -s $FILE -q 100 
 
-tesseract -l $LANG $FILE stdout | yad --text-info --title "Tesseracted"
+TEXT=$(tesseract -l $LANG $FILE stdout) 
+
+KEY=$RANDOM
+
+yad --file --add-preview --filename $FILE --plug=$KEY --tabnum=1 &
+echo $TEXT | yad --text-info --plug=$KEY --tabnum=2 &
+
+yad --notebook --key=$KEY --tab="Image" --tab="Text"
 
 feh $FILE
-
-# yad --plug=12345 --tabnum=1 --text="first tab with text" &> res1 &
-# yad --plug=12345 --tabnum=2 --text="second tab" --entry &> res2 &
-# yad --notebook --key=12345 --tab="Tab 1" --tab="Tab 2"
 
 exit
