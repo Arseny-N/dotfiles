@@ -1,0 +1,8 @@
+
+
+
+CONDA_ENV='env'
+CONDA_ROOT=$HOME/.conda
+
+activate_conda_env() { conda activate $1 ; }
+list_conda_envs() { ls $HOME/.conda/envs | cat - <(echo "base");  }
