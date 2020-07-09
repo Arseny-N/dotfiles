@@ -23,6 +23,12 @@ test -f ~/.bashrc.`hostname` && source ~/.bashrc.`hostname`
 
 . $CONDA_ROOT/etc/profile.d/conda.sh
 
+#
+# No pesky folders in ~
+#
+export SEABORN_DATA=$HOME/.cache/seaborn-data
+export SCIKIT_LEARN_DATA=$HOME/.cache/scikit_learn_data
+
 
 #
 # Configure PATH
@@ -47,11 +53,16 @@ tmux_prompt::exit_status() {
 
 	[ $status -eq 0 ] && \
 		echo -n "000" || \
-		printf "\e[31m%.3d\e[0m" $status	
+		printf "%.3d" $status	
+		# BROKEN: Some bug in bash 4.3 makes 'Home' unusable.
+		# 		  The cursor jumps not to the line start but to 
+		#         linestart + n chars, where n seems to equal to 
+		#		  the color codes length.	
+		# printf "\e[31m%.3d\e[0m" $status	
 }
 
 tmux_prompt() {
-	export PS1='$(_tmux_prompt::exit_status) $(jobs -l | wc -l) $ '
+	export PS1='$(tmux_prompt::exit_status) $(jobs -l | wc -l) \\$ '
 }
 
 test -n "$TMUX" && {	
