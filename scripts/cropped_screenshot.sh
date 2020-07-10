@@ -27,7 +27,7 @@ RET=$? # check return status
 
 
 # WM-Close or "cancel"
-if [ "$RET" = 252 ] || [ "$RET" = 1 ] then exit; fi
+if [ "$RET" = 252 ] || [ "$RET" = 1 ]; then exit; fi
 
 echo "Language set to $LANG"
 
