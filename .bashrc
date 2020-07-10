@@ -15,7 +15,6 @@ fi
 CONDA_ENV='base'
 CONDA_ROOT=$HOME/.conda
 
-# Conda is somewhat inconsistent
 activate_conda_env() { conda activate $1 ; }
 list_conda_envs() { ls $HOME/.conda/envs | cat - <(echo "base");  }
 
@@ -31,13 +30,14 @@ test -f ~/.bashrc.`hostname` && source ~/.bashrc.`hostname`
 
 #
 # I don't quite use tmux session names, so it makes sense 
-# to use it to specify the appropriate conda enviroment.
+# to use them to specify the appropriate conda enviroment.
 #
 # In order to allow multipile tmux sessions with the 
-# same enviroment name all after the backslash is ignored. 
+# same enviroment all after the backslash in the session 
+# name is ignored. 
 # 
-# So `tmux new -s env1/logs` will activate the env1 
-# conda enviroment in the env1/logs session.
+# So `tmux new -s env1/logs` will activate env1 
+# the env1/logs tmux session.
 test -n "$TMUX" && {	
 
 	this_env=$(tmux display-message -p '#S' | sed 's/\(.*\)\/.*/\1/' )
