@@ -1,4 +1,37 @@
 #!/bin/bash
+#
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+# Предыстория
+# -----------
+#
+# Для работы на серверах лаборатории я использую ssh для проброски портов и sshfs для 
+# удаленного доступа к файлам. Обе эти программы имеют свои недостатки. Проброска портов 
+# через ssh не всегда удобна так как их нужно прописывать вручную. sshfs же иногда, 
+# довольно неприятно ломается.
+#
+# Я долго решал эти проблемы откапывая нужные команды в истории. В какой-то момент мне 
+# это надоело и я написал удобный скрипт, который решает обе эти проблемы. 
+#
+# Вот этот скрипт. 
+#
+# Если возникнут вопросы, пишите:
+# 
+# 	Email: arseny-n@yandex.ru
+# 	Telegram: @ArsenyNerinovsky
+# 
 
 
 fix_mounts::is_broken_mount() {
@@ -36,7 +69,13 @@ fix_mounts() {
 	} || echo No
 }
 
-
+#
+# setup_mounts <ssh_host> <mount_path>
+#
+#	Checks if <mount_path> is a broken sshfs mount, if so unmount it 
+#   and mount the root of <ssh_host> to <mount_path>. Otherwise just mount 
+#   the root of <ssh_host> to <mount_path> if it is not already mounted.
+#
 setup_mounts() {
 
 	local host=$1 path=$2
@@ -50,6 +89,22 @@ setup_mounts() {
 	} 
 }
 
+#
+# setup_ports <ssh_host> <ct_user> <port_prefix>
+#
+#	Starts port forwarding from <ct_user>@<ssh_host> to local host. All 
+#	open ports on <ssh_host> by <ct_user> are forwarded with the addition 
+#	of 8889,8888,6006,8097. 
+#
+#   Forwarding of all open ports is quite convenient since it allows 
+#   to just restart the script if I want to forward a previously unforwarded 
+#   port.
+#
+#   By default remote ports are forwarded to the same local ports. Since 
+#   this is sometimes undesirable the <port_prefix> argument could be used in 
+#   order to prefix the local ports with a user supplied prefix. If this is 
+#   not needed it could be leaved empty.
+#   
 setup_ports() {
 
 	local host=$1 user=$2 port_prefix=$3
@@ -75,6 +130,10 @@ is_online() { ping -c 2 -W 1 $1 &> /dev/null ; }
 # Config
 #
 
+# My local computer configuration.
+# 
+# If you are tailoring this script to your needs 
+# this can be safely removed.
 (
 	is_online box && {
 		echo box is online, mounting
@@ -83,7 +142,12 @@ is_online() { ping -c 2 -W 1 $1 &> /dev/null ; }
 )& 
 
 
-
+# CTLab configuration.
+#
+# Substitute anerinovsky with your CTLab username.
+# Substitute laplas.r, turing.r with the correct ssh hosts.
+# You should be able to do `ssh <ssh_host>` and get a shell 
+# in order for this to work.
 
 setup_mounts laplas.r $HOME/mnt/laplas
 setup_ports  laplas.r anerinovsky 0 &
@@ -94,11 +158,3 @@ setup_ports  turing.r anerinovsky 1 &
 
 # Killing the script will kill all port forwarding 
 wait
-
-
-
-
-
-
-
-

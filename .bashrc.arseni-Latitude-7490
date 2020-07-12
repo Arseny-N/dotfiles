@@ -1,6 +1,4 @@
 
-
-
 CONDA_ENV='env'
 CONDA_ROOT=$HOME/.conda
 
