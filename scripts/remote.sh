@@ -1,6 +1,5 @@
 #!/bin/bash
 #
-#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -13,6 +12,9 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+
+
 #
 # Предыстория
 # -----------
@@ -72,7 +74,7 @@ fix_mounts() {
 #
 # setup_mounts <ssh_host> <mount_path>
 #
-#	Checks if <mount_path> is a broken sshfs mount, if so unmount it 
+#   Checks if <mount_path> is a broken sshfs mount, if so unmount it 
 #   and mount the root of <ssh_host> to <mount_path>. Otherwise just mount 
 #   the root of <ssh_host> to <mount_path> if it is not already mounted.
 #
@@ -92,9 +94,9 @@ setup_mounts() {
 #
 # setup_ports <ssh_host> <ct_user> <port_prefix>
 #
-#	Starts port forwarding from <ct_user>@<ssh_host> to local host. All 
-#	open ports on <ssh_host> by <ct_user> are forwarded with the addition 
-#	of 8889,8888,6006,8097. 
+#   Starts port forwarding from <ct_user>@<ssh_host> to local host. All 
+#   open ports on <ssh_host> by <ct_user> are forwarded with the addition 
+#   of 8889,8888,6006,8097. 
 #
 #   Forwarding of all open ports is quite convenient since it allows 
 #   to just restart the script if I want to forward a previously unforwarded 
@@ -146,8 +148,9 @@ is_online() { ping -c 2 -W 1 $1 &> /dev/null ; }
 #
 # Substitute anerinovsky with your CTLab username.
 # Substitute laplas.r, turing.r with the correct ssh hosts.
-# You should be able to do `ssh <ssh_host>` and get a shell 
-# in order for this to work.
+# 
+# If it does not work try doing `ssh <ssh_host>`. It should 
+# get you a shell in order for this to work.
 
 setup_mounts laplas.r $HOME/mnt/laplas
 setup_ports  laplas.r anerinovsky 0 &
